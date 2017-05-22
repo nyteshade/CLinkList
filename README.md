@@ -6,9 +6,12 @@ I work on various retro computing platforms. I wanted a quick linked list that I
 This is an early WIP (_work in progress_), but for now it compiles and runs and does so with an easy ability to clear the memory allocated for its use. 
 
 ## TODO
-I would like to add a suite of handy functions that allow for anything from iterating over items to hashing them. I also need to add support for KeyedVoids allowing pointers to whatever the user may want, keyed by a string. 
+ - [ ] Add a suite of handy functions that allow for anything from iterating over items to hashing them. 
+ - [ ] Add support for KeyedVoids allowing pointers to whatever the user may want, keyed by a string.
+ - [ ] Add proper code comments and usage to the header
+ - [ ] Add a proper test.c file that generates a unit test binary
 
-###Example
+### Example
 ```c
   LinkList *list = LLCreate();
 
