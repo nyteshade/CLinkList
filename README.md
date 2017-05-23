@@ -43,8 +43,15 @@ In addition to potentially looking cleaner, this also provides an opportunity fo
 
 ```c
   LinkList *list = LLCreate();
-  list->addKeyedString(list, “name”, “Brielle”);
-  list->addKeyedString(list, “age”, “MYOB”);
+  
+  /* You'll also notice the lack of specifying the string type as 
+   * this will be implied by the function name 
+   */
+  list->addKeyedString(list, "name", "Brielle");
+  list->addKeyedString(list, "age", "MYOB");
+
+  /* wchar_t support versions might look like this */
+  list->addKeyedWString(list, "name", "清子");
 
   /* use list */
 
