@@ -35,3 +35,18 @@ Ensure that ```BIG_TYPES``` is defined for the 64-bit types and ```WCHAR_SUPPORT
 
   LLDelete(list);
 ```
+
+### Proposed Fun
+The idea below is to add a suite of function pointers to the main `LinkList` struct that will be assigned when `LLCreate()` is invoked.  This allows an almost OO syntax to be used with the exception being that the list itself must be passed in as the first parameter for each of the said function calls. 
+
+In addition to potentially looking cleaner, this also provides an opportunity for your own code to have its own LLCreate() function that reassigns these methods to your own versions of the functions without chaning the standard usage pattern.
+
+```
+  LinkList *list = LLCreate();
+  list->addKeyedString(list, “name”, “Brielle”);
+  list->addKeyedString(list, “age”, “MYOB”);
+
+  /* use list */
+
+  LLDelete(list);
+```
