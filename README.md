@@ -41,7 +41,7 @@ The idea below is to add a suite of function pointers to the main `LinkList` str
 
 In addition to potentially looking cleaner, this also provides an opportunity for your own code to have its own LLCreate() function that reassigns these methods to your own versions of the functions without chaning the standard usage pattern.
 
-```
+```c
   LinkList *list = LLCreate();
   list->addKeyedString(list, “name”, “Brielle”);
   list->addKeyedString(list, “age”, “MYOB”);
