@@ -11,6 +11,13 @@ This is an early WIP (_work in progress_), but for now it compiles and runs and 
  - [ ] Add proper code comments and usage to the header
  - [ ] Add a proper test.c file that generates a unit test binary
 
+## Confirmed Compiler Support
+ - [ ] SAS/C 6.58 (Amiga/68k)
+ - [ ] VBCC (Amiga/68k)
+ - [x] Metrowerks Codewarrior 4.x (Mac 68k/PPC)
+ - [ ] Metrowerks Codewarrior 2.x (Mac 68k/PPC)
+...more to come
+
 ## Defines of Note
 Given that a lot of retro platforms neither support wchar or 64-bit types such as long long or long double, these are escaped behind some pound sign defines.
 
