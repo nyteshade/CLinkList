@@ -1,7 +1,11 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
+#ifdef WCHAR_SUPPORT
 #include <wchar.h>
+#endif
+
+#include <stdio.h>
 
 #pragma mark - Base Types
 
@@ -15,6 +19,14 @@ typedef LL_KEY_TYPE LLKey;
 
 typedef unsigned int (*LLHashFn)(LLKey key, int limit);
 typedef size_t LLHashLimit;
+
+#ifndef BIG_TYPES
+#define MAX_INT_TYPE long
+#define MAX_DEC_TYPE double
+#else
+#define MAX_INT_TYPE long long
+#define MAX_DEC_TYPE long double
+#endif
 
 #pragma mark - Enums
 
@@ -32,21 +44,27 @@ typedef enum
   LLIN_SHORT = 2,
   LLIN_INT = 4,
   LLIN_LONG = 8,
+  #ifdef BIG_TYPES
   LLIN_LONG_LONG = 16,
+  #endif
   LLIN_UNSIGNED = 256
 } LLIntegerType;
 
 typedef enum
 {
   LLDN_FLOAT = 1,
-  LLDN_DOUBLE = 2,
-  LLDN_LONG_DOUBLE = 4,
+  LLDN_DOUBLE = 2
+  #ifdef BIG_TYPES
+  , LLDN_LONG_DOUBLE = 4
+  #endif
 } LLDecimalType;
 
 typedef enum
 {
-  LLSN_STRING = 0,
-  LLSN_WIDE = 1
+  #ifndef WCHAR_SUPPORT
+  LLSN_WIDE = 1,
+  #endif
+  LLSN_STRING = 0
 } LLStringType;
 
 typedef enum 
@@ -90,8 +108,10 @@ typedef struct LLIntegerNode
     unsigned int ui;
     long l;
     unsigned long ul;
+    #ifdef BIG_TYPES
     long long ll;
     unsigned long long ull;
+    #endif
   };
   LLIntegerType type;
 } LLIntegerNode;
@@ -107,7 +127,9 @@ typedef struct LLDecimalNode
   union {
     float f;
     double d;
+    #ifdef BIG_TYPES
     long double ld;
+    #endif
   };
   LLDecimalType type;
 } LLDecimalNode;
@@ -123,7 +145,9 @@ typedef struct LLStringNode
   union
   {
     char *s;
+    #ifdef WCHAR_SUPPORT
     wchar_t *w;
+    #endif
   };
   LLStringType type;
 } LLStringNode;
@@ -184,12 +208,12 @@ LinkNode *LNCreate(VoidPtr value, LinkNodeDataType type);
 
 LLKeyedNode *LNKCreate(LLKey key, LLHashFn hashFunction);
 LLBoolNode *LNBCreate(LLBoolean boolean);
-LLIntegerNode *LNICreate(long long value, LLIntegerType type);
-LLDecimalNode *LNDCreate(long double value, LLDecimalType type);
+LLIntegerNode *LNICreate(MAX_INT_TYPE value, LLIntegerType type);
+LLDecimalNode *LNDCreate(MAX_DEC_TYPE value, LLDecimalType type);
 LLStringNode *LNSCreate(VoidPtr string, LLStringType type);
 LLKeyedBool *LNKBCreate(LLKey key, LLBoolean boolean);
-LLKeyedInteger *LNKICreate(LLKey key, long long value, LLIntegerType type);
-LLKeyedDecimal *LNKDCreate(LLKey key, long double value, LLDecimalType type);
+LLKeyedInteger *LNKICreate(LLKey key, MAX_INT_TYPE value, LLIntegerType type);
+LLKeyedDecimal *LNKDCreate(LLKey key, MAX_DEC_TYPE value, LLDecimalType type);
 LLKeyedString *LNKSCreate(LLKey key, VoidPtr string, LLStringType type);
 
 #pragma mark - Deallocation Functions
@@ -201,14 +225,14 @@ void LNDelete(LinkNode *node);
 
 LinkNode *LLPush(LinkList *list, LinkNode *node);
 LinkNode *LLPushBoolean(LinkList *list, LLBoolean boolean);
-LinkNode *LLPushInteger(LinkList *list, long long value, LLIntegerType type);
-LinkNode *LLPushDecimal(LinkList *list, long double value, LLDecimalType type);
+LinkNode *LLPushInteger(LinkList *list, MAX_INT_TYPE value, LLIntegerType type);
+LinkNode *LLPushDecimal(LinkList *list, MAX_DEC_TYPE value, LLDecimalType type);
 LinkNode *LLPushString(LinkList *list, VoidPtr string, LLStringType type);
 
 LinkNode *LLPushKey(LinkList *list, LLKeyedNode *node);
 LinkNode *LLPushKeyedBoolean(LinkList *list, LLKey key, LLBoolean boolean);
-LinkNode *LLPushKeyedInteger(LinkList *list, LLKey key, long long value, LLIntegerType type);
-LinkNode *LLPushKeyedDecimal(LinkList *list, LLKey key, long double value, LLDecimalType type);
+LinkNode *LLPushKeyedInteger(LinkList *list, LLKey key, MAX_INT_TYPE value, LLIntegerType type);
+LinkNode *LLPushKeyedDecimal(LinkList *list, LLKey key, MAX_DEC_TYPE value, LLDecimalType type);
 LinkNode *LLPushKeyedString(LinkList *list, LLKey key, VoidPtr string, LLStringType type);
 
 #pragma mark - List Pop Functions

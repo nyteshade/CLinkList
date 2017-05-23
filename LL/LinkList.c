@@ -44,6 +44,7 @@ char *__strdup(char *source)
   return dest;
 }
 
+#ifdef WCHAR_SUPPORT
 wchar_t *__wstrdup(wchar_t *source)
 {
   size_t size = wcslen(source) + sizeof(wint_t);
@@ -53,8 +54,9 @@ wchar_t *__wstrdup(wchar_t *source)
   wcscpy(dest, source);
   return dest;
 }
+#endif
 
-void LNSetIntByType(LLIntegerNode *node, LLIntegerType type, long long value)
+void LNSetIntByType(LLIntegerNode *node, LLIntegerType type, MAX_INT_TYPE value)
 {  
   switch(type) 
   {
@@ -82,20 +84,26 @@ void LNSetIntByType(LLIntegerNode *node, LLIntegerType type, long long value)
         : (node->l = (long)type);
       node->type = type;
       break;
+    #ifdef BIG_TYPES
     case LLIN_LONG_LONG:
       type & LLIN_UNSIGNED 
-        ? (node->ull = (unsigned long long)value) 
-        : (node->ll = (long long)type);
+        ? (node->ull = (unsigned MAX_INT_TYPE)value) 
+        : (node->ll = (MAX_INT_TYPE)type);
       node->type = type;
       break;
+    #endif
     default:
+      #ifdef BIG_TYPES
       node->ll = value;
+      #else
+      node->l = value;
+      #endif
       node->type = type;
       break;
   }  
 }
 
-void LNSetDecByType(LLDecimalNode *node, LLDecimalType type, long double value)
+void LNSetDecByType(LLDecimalNode *node, LLDecimalType type, MAX_DEC_TYPE value)
 {
   switch (type)
   {
@@ -107,10 +115,12 @@ void LNSetDecByType(LLDecimalNode *node, LLDecimalType type, long double value)
       node->d = (double)value;
       node->type = type;
       break;
+    #ifdef BIG_TYPES
     case LLDN_LONG_DOUBLE:
-      node->ld = (long double)value;
+      node->ld = (MAX_DEC_TYPE)value;
       node->type = type;
       break;
+    #endif
   }
 }
 
@@ -118,14 +128,17 @@ void LNSetStrByType(LLStringNode *node, LLStringType type, VoidPtr string)
 {
   switch (type)
   {
+    default:
     case LLSN_STRING:
       node->s = __strdup((char *)string);
       node->type = type;
       break;
+    #ifdef WCHAR_SUPPORT
     case LLSN_WIDE:
       node->w = __wstrdup((wchar_t *)string);
       node->type = type;
       break;
+    #endif
   }
 }
 
@@ -193,9 +206,11 @@ LLStringNode *LLDuplicateStringNode(LLStringNode *source)
     case LLSN_STRING:
       dest->s = __strdup(source->s);
       break;
+    #ifdef WCHAR_SUPPORT
     case LLSN_WIDE:
       dest->w = __wstrdup(source->w);
       break;
+    #endif
   }
 
   return dest;
@@ -383,7 +398,7 @@ LLBoolNode *LNBCreate(LLBoolean boolean)
   return node;
 }
 
-LLIntegerNode *LNICreate(long long value, LLIntegerType type)
+LLIntegerNode *LNICreate(MAX_INT_TYPE value, LLIntegerType type)
 {
   LLIntegerNode *node = LNIInit(NULL, Yes);
 
@@ -391,7 +406,7 @@ LLIntegerNode *LNICreate(long long value, LLIntegerType type)
   return node;
 }
 
-LLDecimalNode *LNDCreate(long double value, LLDecimalType type)
+LLDecimalNode *LNDCreate(MAX_DEC_TYPE value, LLDecimalType type)
 {
   LLDecimalNode *node = LNDInit(NULL, Yes);
 
@@ -418,7 +433,7 @@ LLKeyedBool *LNKBCreate(LLKey key, LLBoolean boolean)
 }
 
 
-LLKeyedInteger *LNKICreate(LLKey key, long long value, LLIntegerType type)
+LLKeyedInteger *LNKICreate(LLKey key, MAX_INT_TYPE value, LLIntegerType type)
 {
   LLKeyedNode *keyNode = LNKCreate(key, LLDefaultHashFunction);
   LLIntegerNode *data = LNICreate(value, type);
@@ -430,7 +445,7 @@ LLKeyedInteger *LNKICreate(LLKey key, long long value, LLIntegerType type)
 }
 
 
-LLKeyedDecimal *LNKDCreate(LLKey key, long double value, LLDecimalType type)
+LLKeyedDecimal *LNKDCreate(LLKey key, MAX_DEC_TYPE value, LLDecimalType type)
 {
   LLKeyedNode *keyNode = LNKCreate(key, LLDefaultHashFunction);
   LLDecimalNode *data = LNDCreate(value, type);
@@ -579,7 +594,7 @@ LinkNode *LLPushBoolean(LinkList *list, LLBoolean boolean)
 }
 
 
-LinkNode *LLPushInteger(LinkList *list, long long value, LLIntegerType type)
+LinkNode *LLPushInteger(LinkList *list, MAX_INT_TYPE value, LLIntegerType type)
 {
   LLIntegerNode *data = LNICreate(value, type);
   LinkNode *node = LNCreate(data, LN_INTEGER);
@@ -588,7 +603,7 @@ LinkNode *LLPushInteger(LinkList *list, long long value, LLIntegerType type)
 }
 
 
-LinkNode *LLPushDecimal(LinkList *list, long double value, LLDecimalType type)
+LinkNode *LLPushDecimal(LinkList *list, MAX_DEC_TYPE value, LLDecimalType type)
 {
   LLDecimalNode *data = LNDCreate(value, type);
   LinkNode *node = LNCreate(data, LN_DECIMAL);
@@ -626,7 +641,7 @@ LinkNode *LLPushKeyedBoolean(LinkList *list, LLKey key, LLBoolean boolean)
 LinkNode *LLPushKeyedInteger(
   LinkList *list, 
   LLKey key, 
-  long long value, 
+  MAX_INT_TYPE value, 
   LLIntegerType type
 ) 
 {
@@ -637,7 +652,7 @@ LinkNode *LLPushKeyedInteger(
 }
 
 
-LinkNode *LLPushKeyedDecimal(LinkList *list, LLKey key, long double value, LLDecimalType type)
+LinkNode *LLPushKeyedDecimal(LinkList *list, LLKey key, MAX_DEC_TYPE value, LLDecimalType type)
 {
   LLKeyedDecimal *data = LNKDCreate(key, value, type);
   LinkNode *node = LNCreate(data, LN_DECIMAL | LN_KEYED);
