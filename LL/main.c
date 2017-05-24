@@ -5,11 +5,11 @@ int main(int argc, char **argv)
 {
   LinkList *list = LLCreate();
 
-  LLPushKeyedString(list, "name", "Brielle", 0L);
-  LLPushKeyedString(list, "age", "MYOB", 0L);
-  
-  printf("Name: %s\n", LLPopKeyedString(list, "name")->string.s);
-  printf("Age : %s\n", LLPopKeyedString(list, "age")->string.s);
+  list->pushKString(list, "name", "Brielle");
+  list->pushKInt(list, "age", 32);
+
+  printf("Name: %s\n", list->popKString(list, "name"));
+  printf("Age : %d\n", list->popKInt(list, "age"));
   
   LLDelete(list);
   
